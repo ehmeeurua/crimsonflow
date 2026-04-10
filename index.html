@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoFlow - P2P Exchange USDC to Naira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .display-font {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        .gradient-red {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        }
+
+        .accent-red {
+            color: #dc2626;
+        }
+
+        .border-red {
+            border-color: #dc2626;
+        }
+
+        .text-slate-dark {
+            color: #0f172a;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Exchange Card */
+        .exchange-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .exchange-card:focus-within {
+            border-color: #dc2626;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.15);
+        }
+
+        /* Exchange Section */
+        .exchange-section {
+            padding: 3rem 0;
+        }
+
+        .exchange-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @media (max-width: 768px) {
+            .exchange-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .exchange-widget {
+            padding: 2rem;
+        }
+
+        .exchange-widget h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .input-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #dc2626;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1.25rem;
+            font-weight: 600;
+            outline: none;
+            color: #0f172a;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #cbd5e1;
+        }
+
+        .currency-label {
+            font-weight: 600;
+            color: #64748b;
+            min-width: 60px;
+        }
+
+        .swap-button {
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem auto;
+        }
+
+        .swap-button:hover {
+            background: #fee2e2;
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        .rate-info {
+            background: #fee2e2;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rate-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .rate-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .rate-label {
+            color: #64748b;
+        }
+
+        .rate-value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #dc2626;
+            border: 2px solid #dc2626;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #fef2f2;
+        }
+
+        /* Feature Box */
+        .feature-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: #fee2e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #dc2626;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .feature-content h3 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-content p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* Merchants Section */
+        .merchants-section {
+            padding: 3rem 0;
+            background: white;
+            margin-top: 3rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.75rem, 5vw, 3rem);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+        }
+
+        /* Filter Buttons */
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: #dc2626;
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Merchants Grid */
+        .merchants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .merchant-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 2px solid #f0f0f0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .merchant-card:nth-child(1) { animation-delay: 0.1s; }
+        .merchant-card:nth-child(2) { animation-delay: 0.2s; }
+        .merchant-card:nth-child(3) { animation-delay: 0.3s; }
+        .merchant-card:nth-child(4) { animation-delay: 0.4s; }
+        .merchant-card:nth-child(5) { animation-delay: 0.5s; }
+        .merchant-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .merchant-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
+            border-color: #dc2626;
+        }
+
+        .merchant-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #fff5f5 0%, #fffbfb 100%);
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .merchant-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .merchant-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+
+        .merchant-location {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .merchant-body {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .merchant-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .rating-text {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .merchant-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+
+        .merchant-stat:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .stat-rate {
+            color: #dc2626;
+        }
+
+        .merchant-footer {
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .merchant-footer button {
+            width: 100%;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+            text-align: center;
+            border-top: 2px solid #dc2626;
+        }
+
+        .footer-text {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 3rem 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .exchange-widget {
+                padding: 1.5rem;
+            }
+
+            .merchants-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon gradient-red">⚡</div>
+                <span class="display-font text-xl">CryptoFlow</span>
+            </div>
+            <nav>
+                <a href="#exchange">Exchange</a>
+                <a href="#merchants">Merchants</a>
+                <a href="#about">Security</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="display-font text-slate-dark">Trade USDC for Naira</h1>
+            <p>Peer-to-peer exchange with verified merchants. Fast, secure, and transparent.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="document.getElementById('exchange').scrollIntoView({behavior: 'smooth'})">
+                    Start Exchange
+                </button>
+                <button class="btn-secondary">
+                    Learn More
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exchange Section -->
+    <section class="exchange-section" id="exchange">
+        <div class="container">
+            <div class="exchange-container">
+                <!-- Exchange Widget -->
+                <div class="exchange-card exchange-widget">
+                    <h2>Quick Exchange</h2>
+                    
+                    <div class="input-field">
+                        <label class="input-label">You Send</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="usdcAmount" placeholder="0.00" min="0" step="0.01">
+                            <span class="currency-label">USDC</span>
+                        </div>
+                    </div>
+
+                    <button class="swap-button" onclick="swapFields()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 5v14m0 0l-7-7m7 7l7-7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <div class="input-field">
+                        <label class="input-label">You Receive</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="nairaAmount" placeholder="0.00" readonly>
+                            <span class="currency-label">₦</span>
+                        </div>
+                    </div>
+
+                    <div class="rate-info">
+                        <div class="rate-row">
+                            <span class="rate-label">Exchange Rate</span>
+                            <span class="rate-value">1 USDC = ₦<span id="rateDisplay">850</span></span>
+                        </div>
+                        <div class="rate-row">
+                            <span class="rate-label">Fee (2%)</span>
+                            <span class="rate-value" id="feeDisplay">₦0.00</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="scrollToMerchants()">
+                        Browse Merchants
+                    </button>
+                </div>
+
+                <!-- Features -->
+                <div>
+                    <h2 style="font-size: 1.75rem; margin-bottom: 1.5rem; font-weight: 600;">Why Choose CryptoFlow</h2>
+                    
+                    <div class="exchange-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="feature-box">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-content">
+                                <h3>Verified Merchants</h3>
+                                <p>All merchants are vetted and rated by our community</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="exchange-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="feature-box">
+                            <div class="feature-icon">🔒</div>
+                            <div class="feature-content">
+                                <h3>Secure Escrow</h3>
+                                <p>Your funds are protected until trade is confirmed</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="exchange-card" style="padding: 1.5rem;">
+                        <div class="feature-box">
+                            <div class="feature-icon">⚡</div>
+                            <div class="feature-content">
+                                <h3>Fast Settlements</h3>
+                                <p>Trades complete in 5-10 minutes on average</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Merchants Section -->
+    <section class="merchants-section" id="merchants">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="display-font section-title text-slate-dark">Available Merchants</h2>
+                <p class="section-subtitle">Select from our network of trusted traders</p>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">All Merchants</button>
+                <button class="filter-btn" data-filter="premium">Premium Only</button>
+                <button class="filter-btn" data-filter="high-volume">High Volume</button>
+                <button class="filter-btn" data-filter="verified">Verified Only</button>
+            </div>
+
+            <div class="merchants-grid" id="merchantsGrid"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="footer-text">&copy; 2024 CryptoFlow. Secure P2P Currency Exchange.</p>
+        </div>
+    </footer>
+
+    <script>
+        const USDC_TO_NGN_RATE = 850;
+        const FEE_PERCENTAGE = 0.02;
+
+        const merchants = [
+            {
+                id: 1,
+                name: 'NairaHub',
+                location: 'Lagos, Nigeria',
+                rating: 4.9,
+                reviews: 2847,
+                minAmount: 100,
+                maxAmount: 50000,
+                rate: 848,
+                volume: '₦125.5M',
+                responseTime: '2 min',
+                type: 'premium',
+                verified: true
+            },
+            {
+                id: 2,
+                name: 'SwiftExchange',
+                location: 'Abuja, Nigeria',
+                rating: 4.8,
+                reviews: 1543,
+                minAmount: 500,
+                maxAmount: 100000,
+                rate: 851,
+                volume: '₦87.3M',
+                responseTime: '3 min',
+                type: 'premium',
+                verified: true
+            },
+            {
+                id: 3,
+                name: 'NairaConnect',
+                location: 'Port Harcourt, Nigeria',
+                rating: 4.7,
+                reviews: 892,
+                minAmount: 50,
+                maxAmount: 25000,
+                rate: 849,
+                volume: '₦45.2M',
+                responseTime: '4 min',
+                type: 'verified',
+                verified: true
+            },
+            {
+                id: 4,
+                name: 'CryptoNaira',
+                location: 'Ibadan, Nigeria',
+                rating: 4.9,
+                reviews: 1100,
+                minAmount: 200,
+                maxAmount: 75000,
+                rate: 852,
+                volume: '₦62.8M',
+                responseTime: '2 min',
+                type: 'premium',
+                verified: true
+            },
+            {
+                id: 5,
+                name: 'FastTrade',
+                location: 'Kano, Nigeria',
+                rating: 4.6,
+                reviews: 523,
+                minAmount: 100,
+                maxAmount: 30000,
+                rate: 850,
+                volume: '₦98.1M',
+                responseTime: '5 min',
+                type: 'high-volume',
+                verified: true
+            },
+            {
+                id: 6,
+                name: 'ProExchange',
+                location: 'Enugu, Nigeria',
+                rating: 4.8,
+                reviews: 945,
+                minAmount: 1000,
+                maxAmount: 200000,
+                rate: 851,
+                volume: '₦51.6M',
+                responseTime: '3 min',
+                type: 'premium',
+                verified: true
+            }
+        ];
+
+        function updateExchange() {
+            const usdcInput = document.getElementById('usdcAmount');
+            const nairaInput = document.getElementById('nairaAmount');
+            
+            const usdcValue = parseFloat(usdcInput.value) || 0;
+            const nairaGross = usdcValue * USDC_TO_NGN_RATE;
+            const fee = nairaGross * FEE_PERCENTAGE;
+            const nairaNet = nairaGross - fee;
+            
+            nairaInput.value = nairaNet.toFixed(2);
+            document.getElementById('feeDisplay').textContent = '₦' + fee.toFixed(2);
+        }
+
+        function swapFields() {
+            const usdcInput = document.getElementById('usdcAmount');
+            const nairaInput = document.getElementById('nairaAmount');
+            
+            const temp = usdcInput.value;
+            usdcInput.value = nairaInput.value;
+            nairaInput.value = temp;
+            
+            updateExchange();
+        }
+
+        function renderMerchants(filter = 'all') {
+            const grid = document.getElementById('merchantsGrid');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'all' 
+                ? merchants 
+                : merchants.filter(m => m.type === filter);
+
+            filtered.forEach((merchant, index) => {
+                const card = document.createElement('div');
+                card.className = 'merchant-card';
+                
+                const stars = '★'.repeat(Math.floor(merchant.rating)) + 
+                             (merchant.rating % 1 !== 0 ? '½' : '');
+
+                card.innerHTML = `
+                    <div class="merchant-header">
+                        <div class="merchant-avatar">${merchant.name.charAt(0)}</div>
+                        <div class="merchant-name">${merchant.name}</div>
+                        <div class="merchant-location">${merchant.location}</div>
+                    </div>
+                    <div class="merchant-body">
+                        <div class="merchant-rating">
+                            <span class="stars">${stars}</span>
+                            <span class="rating-text">${merchant.rating} (${merchant.reviews})</span>
+                        </div>
+                        <div class="merchant-stat">
+                            <span class="stat-label">Rate</span>
+                            <span class="stat-value stat-rate">₦${merchant.rate}</span>
+                        </div>
+                        <div class="merchant-stat">
+                            <span class="stat-label">Min/Max</span>
+                            <span class="stat-value">$${merchant.minAmount} - $${merchant.maxAmount}</span>
+                        </div>
+                        <div class="merchant-stat">
+                            <span class="stat-label">Volume</span>
+                            <span class="stat-value">${merchant.volume}</span>
+                        </div>
+                        <div class="merchant-stat">
+                            <span class="stat-label">Response</span>
+                            <span class="stat-value">${merchant.responseTime}</span>
+                        </div>
+                    </div>
+                    <div class="merchant-footer">
+                        <button class="btn-primary" onclick="tradeWithMerchant('${merchant.name}')">
+                            Trade Now
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function tradeWithMerchant(name) {
+            const amount = document.getElementById('usdcAmount').value;
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Please enter a valid USDC amount');
+                return;
+            }
+            alert(`Starting trade of ${amount} USDC with ${name}`);
+        }
+
+        function scrollToMerchants() {
+            const amount = document.getElementById('usdcAmount').value;
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Please enter a valid USDC amount');
+                return;
+            }
+            document.getElementById('merchants').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('usdcAmount').addEventListener('input', updateExchange);
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderMerchants(btn.dataset.filter);
+            });
+        });
+
+        renderMerchants();
+    </script>
+</body>
+</html>
